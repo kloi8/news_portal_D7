@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+
+{% load castom_filters %}
+{% load castom_tags %}
+
+<!-- Название будет New -->
+{% block title %}
+New
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим саму новость, идентификатор которой был передан в url -->
+{% block content %}
+    <br>
+    <h3>{% current_time '%d %B %Y' %}</h3>
+    <tr>
+        <h3><td>{{ new.title|censor }}</td>
+        <td>{{ new.dateCreation|date:'d M Y' }}</td>
+        <td>{{ new.text|censor }}</td></h3>
+    </tr>
+    <br>
+
+{% endblock content %}

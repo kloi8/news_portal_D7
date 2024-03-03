@@ -1,0 +1,105 @@
+{% extends 'flatpages/default.html' %}
+
+{% load castom_filters %}
+{% load castom_tags %}
+
+<!-- Название - news -->
+{% block title %}
+Post
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все новости -->
+{% block content %}
+<h1>Все новости</h1>
+
+
+
+<h3>{% current_time '%d %B %Y' %}</h3>
+
+<form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти" />
+</form>
+
+<hr>
+
+{# Теперь будем проверять не request.user.is_authenticated, а конкретные права #}
+    {% if perms.news.post_create %}
+    <a href="{% url 'post_create' %}">Добавить новость</a>
+    {% endif %}
+
+    {% if news %}
+    <h3> Всего новостей на странице: {{ news|length }}</h3>
+        <hr>
+        <table> <!-- Начинаем описывать таблицу -->
+            <tr> <!-- Добавляем строку -->
+                <td> <h3>Заголовок</h3> </td><!-- Добавляем ячейку в строку -->
+                <td> <h3>Дата публикации</h3> </td><!-- Добавляем ячейку в строку -->
+                <td> <h3>Содержание...</h3> </td> <!-- Добавляем ячейку в строку -->
+                <td> <h3>Тип публикации</h3> </td>
+                {# Условие получается составным. #}
+                {% if perms.news.post_update or perms.news.post_delete %}
+                <td> <h3>Действия</h3> </td> <!-- Добавляем ячейку в строку -->
+                {% endif %}
+            </tr><!-- Не забываем закрыть HTML-тег строки -->
+            <!-- Для каждой новости будете генерироваться новая строчка,
+        т.е. новый HTML код, который указан в теле цикла.
+        При этом сам цикл работает точно так же, как и в Python.
+        new — переменная цикла, т.е. наша новость, полученная из списка -->
+            {% for new in news reversed %}
+            <tr>
+                <!-- Не забываем, что переменные в шаблоне ничем не отличаются
+            от переменных в Python. Здесь также можно получать доступ к
+            полям объекта модели. Например, здесь мы выводим имя,
+            в следующем столбце описание, и т.д.  -->
+                <td>{{ new.title|censor }}</td>
+                <td>{{ new.dateCreation|date:'d M Y' }}</td>
+                <td>{{ new.text|censor|truncatechars:50 }}</td>
+                <td>{{ new.categoryType }}</td>
+                {# А здесь доступ для каждой ссылки теперь будем проверять отдельно #}
+                <td>{% if perms.news.post_update %}
+                <a href="{% url 'post_update' pk=new.pk %}"><u> <button type="submit"
+                        class="btn btn-primary">Редактировать</button> </u></a>
+                    {% endif %}</td>
+            <!-- ссылка на редактирование товара-->
+                <td>{% if perms.news.post_delete %}
+                <a href="{% url 'post_delete' pk=new.pk %}"><u> <button type="submit" class="btn btn-primary">Удалить</button>
+                </u></a> <!-- ссылка на удаление товара-->
+                {% endif %}
+                </td>
+
+                <td><a href="{{new.pk}}"> Открыть новость </a></td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+    <hr>
+
+    {# Добавляем пагинацию на страницу #}
+
+    {# Информация о предыдущих страницах #}
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+
+{% endblock content %}
