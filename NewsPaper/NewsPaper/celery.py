@@ -13,8 +13,8 @@ app.conf.timezone = 'UTC'
 app.conf.beat_schedule = {
     'action_every_monday_8am': {
         'task': 'news.tasks.weekly_email_task',
-        # 'schedule': crontab(hour=8, minute=0, day_of_week='monday'),
-        'schedule': crontab(),
+        'schedule': crontab(hour=8, minute=0, day_of_week='monday'),
+        # 'schedule': crontab(),
         'args': (),
     },
 }
