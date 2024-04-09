@@ -1,0 +1,32 @@
+{% extends 'flatpages/default.html' %}
+
+{% load castom_filters %}
+{% load castom_tags %}
+
+<!-- Название будет New -->
+{% block title %}
+New
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим саму новость, идентификатор которой был передан в url -->
+{% block content %}
+    <br>
+    <h3>{% current_time '%d %B %Y' %}</h3>
+    <tr>
+        <h3><td>{{ new.title|censor }}</td>
+        <td>{{ new.dateCreation|date:'d M Y' }}</td>
+        <td>{{ new.text|censor }}</td></h3>
+    </tr>
+    <br>
+    <td>{% if perms.news.post_update %}
+                <a href="{% url 'post_update' pk=new.pk %}"><u> <button type="submit"
+                        class="btn btn-primary">Редактировать</button> </u></a>
+                    {% endif %}</td>
+            <!-- ссылка на редактирование товара-->
+                <td>{% if perms.news.post_delete %}
+                <a href="{% url 'post_delete' pk=new.pk %}"><u> <button type="submit" class="btn btn-primary">Удалить</button>
+                </u></a>
+                    <!-- ссылка на удаление товара-->
+                {% endif %}
+                </td>
+{% endblock content %}

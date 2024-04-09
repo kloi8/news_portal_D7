@@ -1,0 +1,15 @@
+{% extends 'flatpages/default.html' %}
+{% load cache %}
+
+{% cache 100 title %}
+{% block title %}
+{{ flatpage.title }}
+{% endblock title %}
+{% endcache %}
+
+{% cache 100 content %}
+{% block content %}
+
+{{ flatpage.content }}
+{% endblock content %}
+{% endcache %}

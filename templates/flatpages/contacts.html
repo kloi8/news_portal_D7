@@ -1,0 +1,15 @@
+{% extends 'flatpages/default.html' %}
+{% load cache %}
+
+{% block title %}
+{{ flatpage.title }}
+{% endblock title %}
+
+{% cache 100 content %}
+{% block content %}
+    <h2>{{ flatpage.title }}</h2>
+    <hr>
+    <h3>Наши контакты:</h3>
+{{ flatpage.content }}
+{% endblock content %}
+{% endcache %}

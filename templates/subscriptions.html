@@ -1,0 +1,31 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Subscriptions
+{% endblock title %}
+
+{% block content %}
+    {% for category in categories  %}
+<!--для каждой категории мы выводим две кнопки:
+подписки и отписки от уведомлений. С помощью аргумента кнопки
+disabled в HTML мы делаем её неактивной.
+Таким образом, пользователь не сможет нажать «Отписаться» у категории,
+на которую он не подписан. С помощью специального инпута с типом hidden
+мы говорим браузеру передать вместе с формой id категории.-->
+        <p>
+            {{ category.name }}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="category_id" value="{{ category.id }}" />
+
+                {% if category.user_subscribed %}
+                    <button disabled>Подписаться</button>
+                    <button name="action" value="unsubscribe">Отписаться</button>
+                {% else %}
+                    <button name="action" value="subscribe">Подписаться</button>
+                    <button disabled>Отписаться</button>
+                {% endif %}
+            </form>
+        </p>
+    {% endfor %}
+{% endblock content %}
